@@ -21,6 +21,16 @@
         <% }); %>
     </div>
 
-    <script src="js/script.js"></script>
+    <% var temp = capteurs[0].temp %>
+
+    <script>
+        var getTemp = '<%= temp %>';
+        // var card = document.getElementsById('item');
+
+        if(getTemp < 18)
+        {
+        }
+        console.log(getTemp);   
+    </script>
 </body>
 </html>

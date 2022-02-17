@@ -1,1 +1,2 @@
-var temp = <%= capteurs.temp %>;
+var getTemp = '<%= temp %>';
+console.log(getTemp);
