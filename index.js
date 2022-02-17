@@ -19,5 +19,5 @@ app.listen(port, () => {
 })
 
 const capteurs = [
-  {nom:"Capteur1", temp:25, minTemp:18, maxTemp:22, hotStart:17, coldStart:23},
-  {nom:"Capteur2", temp:22, minTemp:18, maxTemp:22, hotStart:17, coldStart:23},];
+  {nom:"Capteur 1", temp:25, minTemp:18, maxTemp:22},
+  {nom:"Capteur 2", temp:22, minTemp:18, maxTemp:22},];

@@ -4,10 +4,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
     <title>Document</title>
 </head>
 <body>
-    <p>bonjour</p>
-    
+    <header class="navbar">Centre d'opérations IoT</header>
+
+    <div class="grid">
+        <% capteurs.forEach(function(capteur){%>
+        <div class="item">
+            <center><h3><%= capteur.nom %></h3></center><br>
+            <p>Température : <%= capteur.temp %>°C</p>
+            <p>Min : <%= capteur.minTemp %>°C</p>
+            <p>Max : <%= capteur.maxTemp %>°C</p>
+        </div>
+        <% }); %>
+    </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
