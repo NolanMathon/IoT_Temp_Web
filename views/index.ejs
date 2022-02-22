@@ -12,25 +12,69 @@
 
     <div class="grid">
         <% capteurs.forEach(function(capteur){%>
-        <div class="item">
+        <div class="item" id="card_<%= capteur.nom %>">
             <center><h3><%= capteur.nom %></h3></center><br>
             <p>Température : <%= capteur.temp %>°C</p>
             <p>Min : <%= capteur.minTemp %>°C</p>
-            <p>Max : <%= capteur.maxTemp %>°C</p>
+            <p>Max : <%= capteur.maxTemp %>°C</p><br>
+
+            <div class="settings">
+                <label for="tempminsouhaitee">Température minimale souhaitée : </label><input type="number" class="inputtemp" name="tempminsouhaitee" min="15" max="28" id="newMinTemp"><br>
+                <label for="tempmaxsouhaitee">Température maximale souhaitée : </label><input type="number" class="inputtemp" name="tempmaxsouhaitee" min="15" max="28" id="newMaxTemp"><br><br>
+                <center><input type="submit" value="Valider ✔" class="inputsubmit" onclick="setPoint()"></center>
+            </div>
+
         </div>
         <% }); %>
     </div>
 
-    <% var temp = capteurs[0].temp %>
+    <% var temp = capteurs[0].temp
+       var temp2 = capteurs[1].temp
+       var nom = capteurs[0].nom
+       var nom2 = capteurs[1].nom %>
 
-    <script>
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>    <script>
+        function setPoint()
+        {
+            var newMinTemp = document.getElementById('newMinTemp').value;
+            var newMaxTemp = document.getElementById('newMaxTemp').value;
+            console.log("newMin : " + newMinTemp);
+            console.log("newMax : " + newMaxTemp);
+            // getTemp == newTemp;
+            // console.log(getTemp);
+            var data = {minTemp:newMinTemp, maxTemp:newMaxTemp}
+
+            $.post( "/setPoint", data, function( reponse ) {
+                console.log(reponse);
+            });
+        }
+
         var getTemp = '<%= temp %>';
-        // var card = document.getElementsById('item');
+        var getTemp2 = '<%= temp2 %>';
+        var getNom = '<%= nom %>';
+        var getNom2 = '<%= nom2 %>';
+        var card = document.getElementById('card_'+ getNom);
+        var card2 = document.getElementById('card_'+ getNom2);
 
         if(getTemp < 18)
         {
+            card.style.backgroundColor = "#4d4dff";
         }
-        console.log(getTemp);   
+        else if(getTemp > 23)
+        {
+            card.style.backgroundColor = "#ff471a";
+        }
+
+        if(getTemp2 < 18)
+        {
+            card2.style.backgroundColor = "#4d4dff";
+        }
+        else if(getTemp2 > 23)
+        {
+            card2.style.backgroundColor = "#ff471a";
+        }
+
+
     </script>
 </body>
 </html>

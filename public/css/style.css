@@ -16,7 +16,6 @@ body
 .grid 
 {
     display: grid;
-    height: 200px;
     grid-template-columns: auto;
     grid-template-rows: repeat(2, 1fr);
 }
@@ -28,12 +27,33 @@ body
     box-shadow:10px 10px 10px grey;
     -webkit-box-shadow:10px 10px 10px grey;
     -moz-box-shadow: 10px 10px 10px grey;
-    margin: 40px;
+    margin: 80px;
     border-radius: 10px;
     padding: 20px;
+    height: auto;
 }
 
 .item:hover
 {
     background-color: rgba(128, 224, 119, 0.877);
+}
+
+.settings
+{
+    margin-left: 30px;
+}
+
+.inputtemp
+{
+    border: 1px solid black;
+    border-radius: 10px;
+    text-align: center;
+    margin: 10px;
+}
+
+.inputsubmit
+{
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: lime;
 }
