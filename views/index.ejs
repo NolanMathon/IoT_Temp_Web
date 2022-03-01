@@ -11,7 +11,7 @@
     <header class="navbar">Centre d'opérations IoT</header>
 
     <div class="grid">
-        <% capteurs.forEach(function(capteur){%>
+        <% capteursList.forEach(function(capteur){%>
         <div class="item" id="card_<%= capteur.nom %>">
             <center><h3><%= capteur.nom %></h3></center><br>
             <p>Température : <%= capteur.temp %>°C</p>
@@ -28,10 +28,13 @@
         <% }); %>
     </div>
 
-    <% var temp = capteurs[0].temp
-       var temp2 = capteurs[1].temp
-       var nom = capteurs[0].nom
-       var nom2 = capteurs[1].nom %>
+    <%datasList.forEach(function(data) {%>
+        <p><%= data.min %></p>
+        <p><%= data.max %></p>
+    <%})%>
+
+    <% var temp = capteursList[0].temp
+       var nom = capteursList[0].name %>
 
        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>    
        <script>
@@ -49,6 +52,21 @@
                 console.log(reponse);
                 console.log("test2");
                 location.reload(true);
+            });
+
+            var MongoClient = require('mongodb').MongoClient;
+            var url = "mongodb://127.0.0.1:27017/";
+
+            MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db("mydb");
+            var myquery = { address: /^S/ };
+            var newvalues = {$set: {min: newMinTemp}, $set: {max: newMaxTemp} };
+            dbo.collection("Datas").updateMany(myquery, newvalues, function(err, res) {
+                if (err) throw err;
+                console.log(res.result.nModified + " document(s) updated");
+                db.close();
+            });
             });
         }
 

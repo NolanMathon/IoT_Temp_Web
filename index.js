@@ -2,6 +2,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 
+const mongoose = require('mongoose');
+const { Decimal128, Int32 } = require('mongodb');
+
 const app = express()
 const port = 80
 
@@ -10,29 +13,56 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
-app.get('/', function(req, res) {
-    res.render('index', {capteurs:capteurs});
-});
+mongoose.connect('mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority');
+
+
+const datasSchema = {
+  min: Decimal128,
+  max: Decimal128
+}
+
+const capteursSchema = {
+  name: String,
+  min: Decimal128,
+  max: Decimal128,
+  temp: Decimal128
+}
+
+const Datas = mongoose.model('Datas', datasSchema);
+const Capteurs = mongoose.model('Capteurs', capteursSchema);
+
+// var capteurs = [
+//   {nom:"Capteur 1", temp:42, minTemp:18, maxTemp:22},
+//   {nom:"Capteur 2", temp:-8000, minTemp:18, maxTemp:22},
+// ];
+
+
+
+app.get('/', (req, res) => {
+  Datas.find({}, function(err, datas)  
+  {
+    Capteurs.find({}, function(err, capteurs)
+    {
+      res.render('index',  {datasList: datas, capteursList: capteurs});
+    })
+  }
+)})
 
 app.listen(port, () => {
   console.log(`Page 1 : http://localhost`)
 })
 
-//Base de données:
+/* //Base de données:
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 client.connect(err => {
-  const collection = client.db("IoT_Tempt_DB").collection("Capteurs");
+  const collectionCapteurs = client.db("IoT_Tempt_DB").collection("Capteurs");
+  const collectionDatas = client.db("IoT_Tempt_DB").collection("Datas");
   // perform actions on the collection object
-  console.log(collection);
   client.close();
-});
- 
-var capteurs = [
-  {nom:"Capteur 1", temp:42, minTemp:18, maxTemp:22},
-  {nom:"Capteur 2", temp:-8000, minTemp:18, maxTemp:22},
-];
+}); */
+
 
 app.post('/setPoint', function(req, res)
 {
@@ -42,8 +72,6 @@ app.post('/setPoint', function(req, res)
       capteur.minTemp = req.body.minTemp;
       capteur.maxTemp = req.body.maxTemp;
       res.send("min" + capteurs[0].minTemp + "max" + capteurs[0].maxTemp);
-
-    }
-    
+    }    
   });
 })
