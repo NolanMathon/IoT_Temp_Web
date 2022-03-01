@@ -46,14 +46,30 @@ body
 .inputtemp
 {
     border: 1px solid black;
-    border-radius: 10px;
+    border-radius: 3px;
     text-align: center;
     margin: 10px;
+    background-color: rgb(235, 233, 233);
+}
+
+.inputtemp:focus
+{
+    background-color: white;
 }
 
 .inputsubmit
 {
     border: 1px solid black;
-    border-radius: 10px;
-    background-color: lime;
+    border-radius: 3px;
+    color: white;
+    background-color: black;
 }
+
+.inputsubmit:hover
+{
+    color: black;
+    background-color: white;
+}
+
+
+

@@ -19,9 +19,9 @@
             <p>Max : <%= capteur.maxTemp %>°C</p><br>
 
             <div class="settings">
-                <label for="tempminsouhaitee">Température minimale souhaitée : </label><input type="number" class="inputtemp" name="tempminsouhaitee" min="15" max="28" id="newMinTemp"><br>
-                <label for="tempmaxsouhaitee">Température maximale souhaitée : </label><input type="number" class="inputtemp" name="tempmaxsouhaitee" min="15" max="28" id="newMaxTemp"><br><br>
-                <center><input type="submit" value="Valider ✔" class="inputsubmit" onclick="setPoint()"></center>
+                <label for="tempminsouhaitee">Température minimale souhaitée : </label><input type="number" class="inputtemp" name="tempminsouhaitee" min="15" max="28" id="newMinTemp_<%= capteur.nom %>" value="<%= capteur.minTemp %>"><br>
+                <label for="tempmaxsouhaitee">Température maximale souhaitée : </label><input type="number" class="inputtemp" name="tempmaxsouhaitee" min="15" max="28" id="newMaxTemp_<%= capteur.nom %>" value="<%= capteur.maxTemp %>"><br><br>
+                <center><input type="submit" value="Valider ✔" class="inputsubmit" onclick="setPoint('<%= capteur.nom %>')"></center>
             </div>
 
         </div>
@@ -33,19 +33,22 @@
        var nom = capteurs[0].nom
        var nom2 = capteurs[1].nom %>
 
-       <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>    <script>
-        function setPoint()
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>    
+       <script>
+        function setPoint(id)
         {
-            var newMinTemp = document.getElementById('newMinTemp').value;
-            var newMaxTemp = document.getElementById('newMaxTemp').value;
+            var newMinTemp = document.getElementById('newMinTemp_' + id).value;
+            var newMaxTemp = document.getElementById('newMaxTemp_' + id).value;
             console.log("newMin : " + newMinTemp);
             console.log("newMax : " + newMaxTemp);
-            // getTemp == newTemp;
-            // console.log(getTemp);
-            var data = {minTemp:newMinTemp, maxTemp:newMaxTemp}
+            var data = {minTemp:newMinTemp, maxTemp:newMaxTemp, nom:id}
 
-            $.post( "/setPoint", data, function( reponse ) {
+            $.post( "/setPoint", data, function( reponse ) 
+            {
+                console.log("test");
                 console.log(reponse);
+                console.log("test2");
+                location.reload(true);
             });
         }
 
@@ -58,7 +61,7 @@
 
         if(getTemp < 18)
         {
-            card.style.backgroundColor = "#4d4dff";
+            card.style.backgroundColor = "#4d79ff";
         }
         else if(getTemp > 23)
         {
@@ -67,7 +70,7 @@
 
         if(getTemp2 < 18)
         {
-            card2.style.backgroundColor = "#4d4dff";
+            card2.style.backgroundColor = "#4d79ff";
         }
         else if(getTemp2 > 23)
         {
