@@ -15,10 +15,8 @@ app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
 mongoose.connect('mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority');
 
-
 const datasSchema = {
-  min: Decimal128,
-  max: Decimal128
+  temp: Decimal128
 }
 
 const capteursSchema = {
@@ -43,6 +41,7 @@ app.get('/', (req, res) => {
   {
     Capteurs.find({}, function(err, capteurs)
     {
+      console.log("capteurs : " + capteurs);
       res.render('index',  {datasList: datas, capteursList: capteurs});
     })
   }
