@@ -11,26 +11,26 @@
     <header class="navbar">Centre d'opérations IoT</header>
 
     <div class="grid">
-        <% capteursList.forEach(function(capteur){%>
+        <% capteursList.forEach(function(capteur) {%>
         <div class="item" id="card_<%= capteur.name %>">
-            <center><h3><%= capteur.nom %></h3></center><br>
+            <center><h3><%= capteur.name %></h3></center><br>
             <p>Température : <%= capteur.temp %>°C</p>
-            <p>Min : <%= capteur.minTemp %>°C</p>
-            <p>Max : <%= capteur.maxTemp %>°C</p><br>
+            <p>Min : <%= capteur.min %>°C</p>
+            <p>Max : <%= capteur.max %>°C</p><br>
 
             <div class="settings">
-                <label for="tempminsouhaitee">Température minimale souhaitée : </label><input type="number" class="inputtemp" name="tempminsouhaitee" min="15" max="28" id="newMinTemp_<%= capteur.name %>" value="<%= capteur.minTemp %>"><br>
-                <label for="tempmaxsouhaitee">Température maximale souhaitée : </label><input type="number" class="inputtemp" name="tempmaxsouhaitee" min="15" max="28" id="newMaxTemp_<%= capteur.name %>" value="<%= capteur.maxTemp %>"><br><br>
-                <center><input type="submit" value="Valider ✔" class="inputsubmit" onclick="setPoint('<%= capteur.nom %>')"></center>
+                <label for="tempminsouhaitee">Température minimale souhaitée : </label><input type="number" class="inputtemp" name="tempminsouhaitee" min="15" max="28" id="newMinTemp_<%= capteur.name %>" value="<%= capteur.min %>"><br>
+                <label for="tempmaxsouhaitee">Température maximale souhaitée : </label><input type="number" class="inputtemp" name="tempmaxsouhaitee" min="15" max="28" id="newMaxTemp_<%= capteur.name %>" value="<%= capteur.max %>"><br><br>
+                <center><input type="submit" value="Valider ✔" class="inputsubmit" onclick="setPoint('<%= capteur.name %>')"></center>
             </div>
 
         </div>
         <% }); %>
     </div>
 
-    <%datasList.forEach(function(data) {%>
+    <% datasList.forEach(function(data) {%>
         <p><%= data.temp %></p>
-    <%})%>
+    <% }); %>
 
     <% var temp = capteursList.temp
        var nom = capteursList.name %>
@@ -43,7 +43,7 @@
             var newMaxTemp = document.getElementById('newMaxTemp_' + id).value;
             console.log("newMin : " + newMinTemp);
             console.log("newMax : " + newMaxTemp);
-            var data = {minTemp:newMinTemp, maxTemp:newMaxTemp, nom:id}
+            var data = {min:newMinTemp, max:newMaxTemp, name:id}
 
             $.post( "/setPoint", data, function( reponse ) 
             {

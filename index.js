@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
+const mqtt = require('mqtt')
 
 const mongoose = require('mongoose');
 const { Decimal128, Int32 } = require('mongodb');
@@ -13,28 +14,58 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
-mongoose.connect('mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority');
+/* Database */
+main().catch(err => console.log(err));
 
-const datasSchema = {
-  temp: Decimal128
+async function main() {
+  await mongoose.connect('mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority');
 }
 
-const capteursSchema = {
+const datasSchema = new mongoose.Schema({
+  temp: Decimal128
+});
+
+const capteursSchema =  new mongoose.Schema({
   name: String,
   min: Decimal128,
   max: Decimal128,
   temp: Decimal128
-}
+});
 
 const Datas = mongoose.model('Datas', datasSchema);
 const Capteurs = mongoose.model('Capteurs', capteursSchema);
 
-// var capteurs = [
-//   {nom:"Capteur 1", temp:42, minTemp:18, maxTemp:22},
-//   {nom:"Capteur 2", temp:-8000, minTemp:18, maxTemp:22},
-// ];
+/* MQTT */
+const host = 'broker.emqx.io'
+const portMQTT = '1883'
+const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+
+const connectUrl = `mqtt://${host}:${portMQTT}`
+
+const client = mqtt.connect(connectUrl, {
+  clientId,
+  clean: true,
+  connectTimeout: 4000,
+  username: 'emqx',
+  password: 'public',
+  reconnectPeriod: 1000,
+})
+
+const capteur1 = '/capteurs/1/temperature'
+client.on('connect', () => {
+  console.log('Connected')
+  client.subscribe([capteur1], () => {
+    console.log(`Subscribe to topic '${capteur1}'`)
+  })
+})
 
 
+client.on('message', (capteur1, payload) => {
+  // Changer la donnée dans la base de donnée
+  console.log('Received Message:', capteur1, payload.toString())
+})
+
+/* Vues */
 
 app.get('/', (req, res) => {
   Datas.find({}, function(err, datas)  
@@ -42,6 +73,7 @@ app.get('/', (req, res) => {
     Capteurs.find({}, function(err, capteurs)
     {
       console.log("capteurs : " + capteurs);
+      console.log("datas : " + datas);
       res.render('index',  {datasList: datas, capteursList: capteurs});
     })
   }
@@ -51,26 +83,28 @@ app.listen(port, () => {
   console.log(`Page 1 : http://localhost`)
 })
 
-/* //Base de données:
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://IoT_Master:IoT_Master@cluster0.ffdcm.mongodb.net/IoT_Temp_DB?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collectionCapteurs = client.db("IoT_Tempt_DB").collection("Capteurs");
-  const collectionDatas = client.db("IoT_Tempt_DB").collection("Datas");
-  // perform actions on the collection object
-  client.close();
-}); */
+app.get('/api/capteurs', (req, res) => {
+  Capteurs.find({}, function(err, capteurs)
+  {
+    res.json(capteurs);
+  })
+})
 
+app.get('/api/datas', (req, res) => {
+  Datas.find({}, function(err, datas)  
+  {
+    res.json(datas);
+  })
+})
 
 app.post('/setPoint', function(req, res)
 {
   capteurs.forEach(capteur => {
-    if(req.body.nom == capteur.nom)
+    if(req.body.name == capteur.name)
     {
-      capteur.minTemp = req.body.minTemp;
-      capteur.maxTemp = req.body.maxTemp;
-      res.send("min" + capteurs[0].minTemp + "max" + capteurs[0].maxTemp);
+      capteur.min = req.body.min;
+      capteur.max = req.body.max;
+      res.send("min" + capteurs[0].min + "max" + capteurs[0].max);
     }    
   });
 })
